@@ -1,28 +1,37 @@
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import './App.css';
 
+interface Person {
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+
 function App() {
-  const [person, setPerson] = useState({
+  const [person, setPerson] = useState<Person>({
     firstName: '',
     lastName: '',
     age: 0,
   });
 
-  const handleFirstName = (e) => {
-    setPerson({ ...person, firstName: e.target.value });
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setPerson((prev) => ({
+      ...prev,
+      [id]: id === 'age' ? Number(value) : value, // Convert age to number
+    }));
   };
 
-  const handleLastName = (e) => {
-    setPerson({ ...person, lastName: e.target.value });
-  };
+  const computedOutput = ()=>{
+    let textOuput:string = ''
+    textOuput = person.firstName?`My name is ${person.firstName} ${person.lastName}` : ""
 
-  const handleAge = (e) => {
-    setPerson({ ...person, age: Number(e.target.value) });
-  };
+    if(person.age){
+      textOuput += ` and my age is ${person.age}`
+    }
 
-  const computedOutput = person.firstName
-    ? `My name is ${person.firstName}`
-    : '';
+    return textOuput || 'Please enter your details.';
+  };
 
   return (
     <>
@@ -32,7 +41,7 @@ function App() {
           id="firstName"
           type="text"
           value={person.firstName}
-          onChange={handleFirstName}
+          onChange={handleChange}
         />
       </div>
       <div>
@@ -41,15 +50,14 @@ function App() {
           id="lastName"
           type="text"
           value={person.lastName}
-          onChange={handleLastName}
+          onChange={handleChange}
         />
       </div>
       <div>
-        {' '}
         <label htmlFor="age">Age</label>
-        <input id="age" type="number" value={person.age} onChange={handleAge} />
+        <input id="age" type="number" value={person.age} onChange={handleChange} />
       </div>
-      {computedOutput}
+      {computedOutput()}
     </>
   );
 }
